@@ -17,17 +17,60 @@ const routes = [
     //路由懒加载
     component: () => import("../views/Login.vue"),
   },
+  {
+    path: "/Register",
+    //路由懒加载
+    component: () => import("../views/Register.vue"),
+  },
+  {
+    path: "/UpdatePassword",
+    //路由懒加载
+    component: () => import("../views/UpdatePassword.vue"),
+  },
+  {
+    path: "/Home",
+    //路由懒加载
+    component: () => import("../views/Home.vue"),
+    children: [
+      {
+        path: "HomeDefault", // 注意这里没有斜杠
+        component: () => import("../views/HomeDefault.vue"),
+      },
+      {
+        path: "UserManagement", 
+        component: () => import("../views/UserManagement.vue"),
+      },
+      {
+        path: "ArticleManagement", 
+        component: () => import("../views/ArticleManagement.vue"),
+      },
+
+      //测试页面
+      {
+        path: "test",
+        component: () => import("../views/Test/Test1.vue"),
+      },
+      {
+        path: "test2",
+        component: () => import("../views/Test/Test2.vue"),
+      },
+    ],
+
+  },
+
+
+
 
 //测试
   {
     path: "/Test",
     //路由懒加载
-    component: () => import("../views/Test.vue"),
+    component: () => import("../views/Test/Test1.vue"),
   },
   {
     path: "/Test2",
     //路由懒加载
-    component: () => import("../views/Test2.vue"),
+    component: () => import("../views/Test/Test2.vue"),
   },
 
 ];
