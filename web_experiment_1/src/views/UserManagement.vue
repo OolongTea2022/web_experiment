@@ -1,0 +1,198 @@
+<template>
+  <div class="user-management-container">
+    <h1>用户管理</h1>
+    
+    <div class="table-header">
+      <el-button type="primary" @click="handleAdd">
+        <el-icon><Plus /></el-icon>新增
+      </el-button>
+      <el-input
+        v-model="searchKeyword"
+        placeholder="请输入昵称"
+        class="search-input"
+        clearable
+      >
+        <template #append>
+          <el-button :icon="Search" @click="handleSearch" type="primary" >搜索</el-button><!--TODO为什么按钮不变蓝-->
+        </template>
+      </el-input>
+    </div>
+    
+    <el-table :data="filteredUserList" border style="width: 100%">
+      <el-table-column prop="id" label="序号" width="50" align="center" />
+      <el-table-column prop="date" label="日期" width="180" align="center" />
+      <el-table-column prop="name" label="姓名" width="120" align="center" />
+      <el-table-column prop="province" label="省份" width="80" align="center" />
+      <el-table-column prop="city" label="市区" width="120" align="center" />
+      <el-table-column prop="address" label="地址"   align="center" />
+      <el-table-column prop="nickname" label="请输入昵称" width="120" align="center" />
+      <el-table-column label="操作" width="150" align="center">
+        <template #default="scope">
+          <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button
+            size="small"
+            type="danger"
+            @click="handleDelete(scope.row)"
+          >
+            删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :total="total"
+        :page-sizes="[5, 10, 20, 50]"
+        layout="total, sizes, prev, pager, next, jumper"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { Plus, Search } from '@element-plus/icons-vue'
+
+// 模拟数据
+const mockData = [
+  {
+    id: 1,
+    date: '2016-05-03 08:00:00',
+    name: '王小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '邮编',
+  },
+  {
+    id: 2,
+    date: '2016-05-03 08:00:00',
+    name: '张小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 3,
+    date: '2016-05-03 08:00:00',
+    name: '刘小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 4,
+    date: '2016-05-03 08:00:00',
+    name: '李小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+
+
+  // 可以添加更多模拟数据
+]
+
+// 响应式数据
+const userList = ref([])
+const searchKeyword = ref('')
+const currentPage = ref(1)
+const pageSize = ref(5)
+const total = ref(0)
+
+// 计算属性 - 过滤后的用户列表
+const filteredUserList = computed(() => {
+  let result = userList.value
+  if (searchKeyword.value) {
+    result = result.filter(user => 
+      user.nickname.includes(searchKeyword.value) || 
+      user.name.includes(searchKeyword.value)
+    )
+  }
+  return result.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
+})
+
+// 初始化数据
+onMounted(() => {
+  // 模拟API请求
+  setTimeout(() => {
+    userList.value = mockData
+    total.value = mockData.length
+  }, 500)
+})
+
+// 操作方法
+const handleAdd = () => {
+  // 新增用户逻辑
+  console.log('新增用户')
+}
+
+const handleEdit = (row) => {
+  // 编辑用户逻辑
+  console.log('编辑用户', row)
+}
+
+const handleDelete = (row) => {
+  // 删除用户逻辑
+  console.log('删除用户', row)
+}
+
+const handleSearch = () => {
+  // 搜索逻辑已在计算属性中处理
+  currentPage.value = 1 // 搜索后重置到第一页
+}
+</script>
+
+<style scoped>
+.user-management-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 300px;
+}
+
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.el-table {
+  margin-top: 20px;
+}
+
+.el-button + .el-button {
+  margin-left: 8px;
+}
+</style>
