@@ -31,7 +31,7 @@
   .profile-container {
     display: flex;
     height: 100%;
-    background-color: #ebb812;
+    /* background-color: #ebb812; */
   }
   
   .profile-side {
