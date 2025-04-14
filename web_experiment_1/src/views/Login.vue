@@ -97,6 +97,9 @@ const form = reactive({
 
 const handleSubmit = () => {
   console.log('登录表单提交:', form)
+  if(form.username == "admin" && form.password == "123456"){
+    router.push("/Home")
+  }
   // 实际登录逻辑
 }
 
@@ -110,7 +113,7 @@ const handleRegister = () => {
 }
 
 const handleResetPassword = () => {
-  router.push('/reset-password')
+  router.push('/UpdatePassword')
 }
 </script>
 
