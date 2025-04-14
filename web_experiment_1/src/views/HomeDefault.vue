@@ -23,7 +23,7 @@
   
   // 用户数据
   const userName = ref('OolongTea')
-  const avatarUrl = ref('../../public/oolongtea.png')
+  const avatarUrl = ref('../../oolongtea.png')
   const currentDate = ref(new Date())
   </script>
   
