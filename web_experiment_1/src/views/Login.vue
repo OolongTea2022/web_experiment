@@ -1,215 +1,216 @@
 <template>
-    <div class="login-container">
-      <h2 class="login-title">登录</h2>
+  <div class="login-container">
+      <div class="login-title">
+          <h2>登录</h2>
+      </div>
       
-      <div class="social-login">
-        <button class="social-btn qq" @click="handleSocialLogin('qq')">
-          QQ登录
-        </button>
-        <button class="social-btn wechat" @click="handleSocialLogin('wechat')">
-          微信登录
-        </button>
-        <button class="social-btn alipay" @click="handleSocialLogin('alipay')">
-          支付宝登录
-        </button>
 
-        
-      </div>
-      
-      <div class="divider">
-        <span class="divider-text">或</span>
-      </div>
-      
-      <form class="login-form" @submit.prevent="handleSubmit">
-        <div class="form-group">
-          <label for="username">用户名</label>
-          <input
-            id="username"
-            v-model="form.username"
-            type="text"
-            placeholder="请输入用户名"
-            required
-          />
+    <div class="login-content">
+      <!-- 左侧：社交登录 -->
+      <div class="social-section">
+
+        <div class="social-buttons">
+          <el-button 
+            class="social-btn qq" 
+            @click="handleSocialLogin('qq')"
+            :icon="QQ"
+          >
+            QQ登录
+          </el-button>
+          <el-button 
+            class="social-btn wechat" 
+            @click="handleSocialLogin('wechat')"
+            :icon="Wechat"
+          >
+            微信登录
+          </el-button>
+          <el-button 
+            class="social-btn alipay" 
+            @click="handleSocialLogin('alipay')"
+            :icon="Alipay"
+          >
+            支付宝登录
+          </el-button>
         </div>
-        
-        <div class="form-group">
-          <label for="password">密码</label>
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            placeholder="请输入密码"
-            required
-          />
+      </div>
+
+      <!-- 右侧：表单登录 -->
+      <div class="form-section">
+        <el-form 
+          :model="form" 
+          @submit.prevent="handleSubmit"
+          label-position="top"
+        >
+          <el-form-item label="用户名">
+            <el-input 
+              v-model="form.username" 
+              placeholder="请输入用户名"
+              :prefix-icon="User"
+            />
+          </el-form-item>
+          
+          <el-form-item label="密码">
+            <el-input 
+              v-model="form.password" 
+              type="password" 
+              placeholder="请输入密码"
+              :prefix-icon="Lock"
+              show-password
+            />
+          </el-form-item>
+          
+          <el-button 
+            type="primary" 
+            native-type="submit" 
+            class="login-btn"
+          >
+            登录
+          </el-button>
+        </el-form>
+
+        <div class="login-footer">
+          <el-link type="primary" @click="handleRegister">注册用户</el-link>
+          <el-link type="primary" @click="handleResetPassword">修改密码</el-link>
         </div>
-        
-        <button type="submit" class="login-btn">登录</button>
-      </form>
-      
-      <div class="login-footer">
-        <a href="#" class="footer-link" @click.prevent="handleRegister">注册用户</a>
-        <a href="#" class="footer-link" @click.prevent="handleResetPassword">修改密码</a>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { reactive } from 'vue'
-  import { useRouter } from 'vue-router'
-  
-  const router = useRouter()
-  
-  const form = reactive({
-    username: '',
-    password: ''
-  })
-  
-  const handleSubmit = () => {
-    console.log('登录表单提交:', form)
-    // 这里添加实际的登录逻辑
-    // 例如调用API验证用户名密码
+  </div>
+</template>
+
+<script setup>
+import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { 
+  User, 
+  Lock, 
+  // Alipay, 
+  // Wechat, 
+  // QQ 
+} from '@element-plus/icons-vue'
+
+const router = useRouter()
+
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const handleSubmit = () => {
+  console.log('登录表单提交:', form)
+  // 实际登录逻辑
+}
+
+const handleSocialLogin = (type) => {
+  console.log('第三方登录:', type)
+  // 第三方登录逻辑
+}
+
+const handleRegister = () => {
+  router.push('/register')
+}
+
+const handleResetPassword = () => {
+  router.push('/reset-password')
+}
+</script>
+
+<style scoped>
+.login-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+
+  flex-direction: column;    /* */
+
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  /* padding: 20px; */
+}
+
+.login-content {
+  display: flex;
+  width: 80%;
+  max-width: 900px;
+  /* gap: 40px; */
+}
+
+.social-section,
+.form-section {
+  flex: 1;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); */
+}
+
+.login-title {
+  text-align: center;
+  /* margin-bottom: 30px; */
+  color: #333;
+  background-color: #fff;
+  width: 80%;
+  max-width: 900px;
+}
+
+.login-title h2{
+      margin-bottom: 0px;
   }
-  
-  const handleSocialLogin = (type) => {
-    console.log('第三方登录:', type)
-    // 这里添加第三方登录逻辑
-    // 例如跳转到对应的OAuth授权页面
-  }
-  
-  const handleRegister = () => {
-    router.push('/register')
-  }
-  
-  const handleResetPassword = () => {
-    router.push('/reset-password')
-  }
-  </script>
-  
-  <style scoped>
-  .login-container {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-  }
-  
-  .login-title {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .social-login {
-    display: flex;
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.social-btn {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+
+  width: 100%;
+  height: 40px;
+  color: white;
+  border: none;
+}
+
+.social-btn:hover {
+  opacity: 0.9;
+}
+
+.qq {
+  background-color: #12b7f5;
+}
+
+.wechat {
+  background-color: #07c160;
+}
+
+.alipay {
+  background-color: #1677ff;
+}
+
+.login-btn {
+  width: 100%;
+  height: 40px;
+  margin-top: 10px;
+}
+
+.login-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* 响应式布局 - 小于800px时变为上下布局 */
+@media (max-width: 800px) {
+  .login-content {
     flex-direction: column;
-    justify-content: space-between;
-    margin-bottom: 20px;
+    gap: 20px;
   }
   
-  .social-btn {
-    flex: 1;
-    padding: 10px;
-    /* margin: 0 5px; */
-    margin: 10px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    transition: opacity 0.3s;
+  .social-section,
+  .form-section {
+    padding: 30px;
   }
-  
-  .social-btn:hover {
-    opacity: 0.9;
-  }
-  
-  .qq {
-    background-color: #12b7f5;
-  }
-  
-  .wechat {
-    background-color: #07c160;
-  }
-  
-  .alipay {
-    background-color: #1677ff;
-  }
-  
-  .divider {
-    position: relative;
-    margin: 20px 0;
-    text-align: center;
-  }
-  
-  .divider::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: #eee;
-    z-index: 1;
-  }
-  
-  .divider-text {
-    position: relative;
-    padding: 0 10px;
-    background-color: #fff;
-    z-index: 2;
-    color: #999;
-  }
-  
-  .login-form {
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #666;
-  }
-  
-  .form-group input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  .login-btn {
-    width: 100%;
-    padding: 10px;
-    background-color: #1677ff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .login-btn:hover {
-    background-color: #4096ff;
-  }
-  
-  .login-footer {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .footer-link {
-    color: #1677ff;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
-  .footer-link:hover {
-    text-decoration: underline;
-  }
-  </style>
+}
+</style>
