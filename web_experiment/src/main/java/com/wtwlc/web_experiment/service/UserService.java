@@ -6,6 +6,7 @@ import com.wtwlc.web_experiment.model.vo.LoginUserVO;
 import com.wtwlc.web_experiment.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
 * @author lenovo
@@ -41,4 +42,14 @@ public interface UserService extends IService<User> {
      */
     Boolean updateUserPassword(String userName, String userPassword, String newUserPassword, String confirmNewUserPassword, HttpServletRequest httpServletRequest);
 
+    /**
+     * 注册用户
+     * @param name
+     * @param password
+     * @param email
+     * @param birthday
+     * @param avatar
+     * @return
+     */
+    long userRegister(String name, String password, String email, Date birthday, String avatar);
 }

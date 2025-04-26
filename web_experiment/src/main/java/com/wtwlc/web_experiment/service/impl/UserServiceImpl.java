@@ -7,7 +7,6 @@ import com.wtwlc.web_experiment.common.ErrorCode;
 import com.wtwlc.web_experiment.exception.BusinessException;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
-import com.wtwlc.web_experiment.model.vo.UserVO;
 import com.wtwlc.web_experiment.service.UserService;
 import com.wtwlc.web_experiment.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+
+
+import java.util.Date;
 
 import static com.wtwlc.web_experiment.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -69,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public Boolean updateUserPassword(String userName, String userPassword, String newUserPassword, String confirmNewUserPassword, HttpServletRequest httpServletRequest) {
         //1.检查参数是否合法
-        if(StringUtils.isEmpty(userName) && StringUtils.isEmpty(userPassword) && StringUtils.isEmpty(newUserPassword) && StringUtils.isEmpty(confirmNewUserPassword)){
+        if(org.apache.commons.lang3.StringUtils.isAnyBlank(userName,userPassword,newUserPassword,confirmNewUserPassword)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
         }
         if(!newUserPassword.equals(confirmNewUserPassword)){
@@ -98,6 +100,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //4.返回结果
         return result;
+    }
+
+    @Override
+    public long userRegister(String name, String password, String email, Date birthday, String avatar) {
+        //1.对参数进行检验
+
+        //TODO 密码类型校验（长度，字符）
+
+        //2.开始插入
+        synchronized (name.intern()){
+            QueryWrapper<User>queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name",name);
+            long cnt = this.baseMapper.selectCount(queryWrapper);
+            if(cnt>0){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户名已存在");
+            }
+            queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("email",email);
+            cnt = this.baseMapper.selectCount(queryWrapper);
+            if(cnt>0){
+                throw new BusinessException(ErrorCode.PARAMS_ERROR,"邮箱被用于注册过");
+            }
+
+            //TODO 密码加密
+
+            User user = new User();
+            user.setName(name);
+            user.setPassword(password);
+            user.setEmail(email);
+            user.setBirthday(birthday);
+            user.setMoney(0.0);
+            user.setAvatar(avatar);
+
+            boolean saveResult = this.save(user);
+            if(!saveResult){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR,"注册失败，数据库错误");
+            }
+
+            return user.getId();//TODO 疑问:id被赋值上去了吗？
+        }
     }
 
 //    @Override
