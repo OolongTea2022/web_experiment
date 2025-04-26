@@ -43,7 +43,7 @@
         >
           <el-form-item label="用户名">
             <el-input 
-              v-model="form.username" 
+              v-model="form.userName" 
               placeholder="请输入用户名"
               :prefix-icon="User"
             />
@@ -51,7 +51,7 @@
           
           <el-form-item label="密码">
             <el-input 
-              v-model="form.password" 
+              v-model="form.userPassword" 
               type="password" 
               placeholder="请输入密码"
               :prefix-icon="Lock"
@@ -80,6 +80,8 @@
 <script setup>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { userLogin } from "../api/user"
+
 import { 
   User, 
   Lock, 
@@ -91,13 +93,22 @@ import {
 const router = useRouter()
 
 const form = reactive({
-  username: '',
-  password: ''
+  userName: '',
+  userPassword: ''
 })
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
   console.log('登录表单提交:', form)
-  if(form.username == "admin" && form.password == "123456"){
+
+  const params = {
+    userName:form.userName,
+    userPassword:form.userPassword
+  }
+
+
+  const res = await userLogin(params);
+  console.log(res);
+  if(res.code == 0){
     router.push("/Home")
   }
   // 实际登录逻辑
