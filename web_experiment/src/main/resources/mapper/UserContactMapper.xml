@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wtwlc.web_experiment.mapper.UserContactMapper">
+
+    <resultMap id="BaseResultMap" type="com.wtwlc.web_experiment.model.entity.UserContact">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="date" column="date" jdbcType="DATE"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="province" column="province" jdbcType="VARCHAR"/>
+            <result property="city" column="city" jdbcType="VARCHAR"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="zip" column="zip" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,date,name,
+        province,city,address,
+        zip
+    </sql>
+</mapper>

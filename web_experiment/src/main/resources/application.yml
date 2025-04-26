@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/web_experiment
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  sql:
+#    init:
+#      schema-locations: classpath:db/schema-mysql.sql
+#      data-locations: classpath:db/data-mysql.sql
+#      mode: always  # 保证启动时初始化执行
+
+mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印SQL日志，可选
+  mapper-locations: classpath:/mapper/**/*.xml
+  type-aliases-package: com.wtwlc.web_experiment.model.entity  # 你的实体类包名
