@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/oss")
 public class OssController {
@@ -21,7 +23,9 @@ public class OssController {
     @GetMapping("/avatar/upload-credential")
     public String getAvatarUploadCredential(@RequestParam String fileName) {
         // 头像通常放在avatar目录下，以用户ID或时间戳命名
-        String objectName = "avatar/" + System.currentTimeMillis() + "-" + fileName;
+        // 使用UUID代替时间戳，避免时间推测
+        String objectName = "avatar/" + UUID.randomUUID() + "-" + fileName;
+//        String objectName = "avatar/" + System.currentTimeMillis() + "-" + fileName;
         // 生成10分钟后过期的上传URL
         return ossUtils.generateUploadCredential(objectName, 10);
     }
