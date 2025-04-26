@@ -14,7 +14,7 @@
           >
             <el-form-item label="用户名">
               <el-input 
-                v-model="form.username" 
+                v-model="form.name" 
                 placeholder="请输入用户名"
                 :prefix-icon="User"
               />
@@ -61,6 +61,7 @@
               :show-file-list="false"
               :auto-upload="false"
               :on-change="handleAvatarChange"
+              accept="image/*"
             >
               <img v-if="form.avatar" :src="form.avatar" class="avatar" />
               <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
@@ -97,29 +98,74 @@
     Message,
     Plus
   } from '@element-plus/icons-vue'
-  
+
+  import{ userRegister ,getOssUploadCredential} from "../api/user.js"
+  import axios from 'axios';
+
   const router = useRouter()
   
   const form = reactive({
-    username: '',
+    name: '',
     password: '',
     email: '',
     birthday: '',
     avatar: ''
   })
   
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log('注册表单提交:', form)
+    const res = await userRegister(form);
+    console.log(res);
+
+    if(res.code == 0){
+      alert("注册成功！");
+      //TODO 换一种提醒方式
+    }
     // 实际注册逻辑
   }
   
-  const handleAvatarChange = (file) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      form.avatar = e.target.result
+  const handleAvatarChange = async (file) => {
+    //Base64方法
+    // const reader = new FileReader()
+    // reader.onload = (e) => {
+    //   form.avatar = e.target.result
+    // }
+    // reader.readAsDataURL(file.raw)
+    // console.log(reader);
+    // console.log(form);
+
+
+    try{
+      console.log(file.name);
+      
+      const uploadUrl = await getOssUploadCredential(file.name,file.raw.type);
+
+      console.log(uploadUrl);
+      console.log(file.raw.type);
+
+      // 直传文件到 OSS
+      await axios.put(uploadUrl, file.raw,{
+        headers:{
+          'Content-Type': file.raw.type,
+          'x-oss-forbid-overwrite': 'true'
+        },
+        transformRequest: [] // 禁止axios修改Content-Type
+      });
+
+
+      // 存储 URL 到表单（去掉签名参数）
+      form.avatar = uploadUrl.split('?')[0];
+
+
+      return false; // 阻止默认上传
+
+    } catch (error) {
+      console.error('上传失败', error);
+      return false;
     }
-    reader.readAsDataURL(file.raw)
   }
+
+
   
   const handleBackToLogin = () => {
     router.push('/login')
