@@ -3,6 +3,8 @@ package com.wtwlc.web_experiment.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.wtwlc.web_experiment.common.ErrorCode;
+import com.wtwlc.web_experiment.exception.BusinessException;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
 import com.wtwlc.web_experiment.model.vo.UserVO;
@@ -28,7 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
 
     @Override
-    public LoginUserVO userLogin(String name, String password, HttpServletRequest request) {
+        public LoginUserVO userLogin(String name, String password, HttpServletRequest request) {
         // 1.校验参数是否合法
         if(StringUtils.isEmpty(name) && StringUtils.isEmpty(password)){
             return null;
@@ -62,6 +64,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         LoginUserVO loginUserVO = new LoginUserVO();
         BeanUtils.copyProperties(user,loginUserVO);
         return loginUserVO;
+    }
+
+    @Override
+    public Boolean updateUserPassword(String userName, String userPassword, String newUserPassword, String confirmNewUserPassword, HttpServletRequest httpServletRequest) {
+        //1.检查参数是否合法
+        if(StringUtils.isEmpty(userName) && StringUtils.isEmpty(userPassword) && StringUtils.isEmpty(newUserPassword) && StringUtils.isEmpty(confirmNewUserPassword)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
+        }
+        if(!newUserPassword.equals(confirmNewUserPassword)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"两次新密码不一样");
+        }
+
+        //TODO 密码加密
+
+        //2。查找数据库中指定数据
+        QueryWrapper<User>queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("name",userName);
+        queryWrapper.eq("password",userPassword);
+
+        User user = this.baseMapper.selectOne(queryWrapper);
+        if(user == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"用户名与旧密码组合不存在");
+        }
+
+        //3.更新数据库中指定数据
+        user.setPassword(newUserPassword);
+        boolean result = this.updateById(user);
+
+        if(!result){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"数据更新失败");
+        }
+
+        //4.返回结果
+        return result;
     }
 
 //    @Override

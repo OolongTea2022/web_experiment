@@ -30,4 +30,15 @@ public interface UserService extends IService<User> {
 
     public LoginUserVO getLoginUserVO(User user);
 
+    /**
+     * 用户更新密码
+     * @param userName
+     * @param userPassword
+     * @param newUserPassword
+     * @param confirmNewUserPassword
+     * @param httpServletRequest
+     * @return
+     */
+    Boolean updateUserPassword(String userName, String userPassword, String newUserPassword, String confirmNewUserPassword, HttpServletRequest httpServletRequest);
+
 }
