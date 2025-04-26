@@ -10,3 +10,12 @@ export const userLogin = async (params) => {
     });
     return res;
 }
+
+export const userUpdatePassword = async (params) => {
+    const res = await myAxios.request({
+        url: "/user/update/password",
+        method: "POST",
+        data: params
+    });
+    return res;
+}

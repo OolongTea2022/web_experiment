@@ -13,7 +13,7 @@
           >
             <el-form-item label="用户名">
               <el-input 
-                v-model="form.username" 
+                v-model="form.userName" 
                 placeholder="请输入用户名"
                 :prefix-icon="User"
               />
@@ -21,7 +21,7 @@
             
             <el-form-item label="旧密码">
               <el-input 
-                v-model="form.oldPassword" 
+                v-model="form.userPassword" 
                 type="password" 
                 placeholder="请输入旧密码"
                 :prefix-icon="Lock"
@@ -39,7 +39,7 @@
           >
             <el-form-item label="新密码">
               <el-input 
-                v-model="form.newPassword" 
+                v-model="form.newUserPassword" 
                 type="password" 
                 placeholder="请输入新密码"
                 :prefix-icon="Lock"
@@ -49,11 +49,12 @@
             
             <el-form-item label="确认新密码">
               <el-input 
-                v-model="form.confirmPassword" 
+                v-model="form.confirmNewUserPassword" 
                 type="password" 
                 placeholder="请再次输入新密码"
                 :prefix-icon="Lock"
                 show-password
+                @keydown.enter = "handleResetPassword"
               />
             </el-form-item>
           </el-form>
@@ -86,24 +87,35 @@
     User, 
     Lock
   } from '@element-plus/icons-vue'
+import { userUpdatePassword } from '../api/user'
   
   const router = useRouter()
   
   const form = reactive({
-    username: '',
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: ''
+    confirmNewUserPassword: "",
+    newUserPassword: "",
+    userName: "",
+    userPassword: ""
   })
   
-  const handleResetPassword = () => {
+  const handleResetPassword = async () => {
     console.log('修改密码表单提交:', form)
     // 实际修改密码逻辑
-    if (form.newPassword !== form.confirmPassword) {
+    if (form.newUserPassword !== form.confirmNewUserPassword) {
       alert('两次输入的新密码不一致')
       return
     }
     // 调用API修改密码...
+    const res = await userUpdatePassword(form);
+    console.log(res.data);
+    
+    if(res.data == true){
+      alert("更改成功！！！");
+      //TODO更改提醒方式
+    }else{
+      alert(res.message);
+    }
+    
   }
   
   const handleBackToLogin = () => {
