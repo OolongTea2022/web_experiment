@@ -2,6 +2,8 @@
   <div class="user-management-container">
     <h1>联系人管理</h1>
     <add-contact-dialog ref="addDialog" @success="handleAddSuccess" />
+    <edit-contact-dialog ref="editDialog" @success="handleEditSuccess" />
+
     <div class="table-header">
       <el-button type="primary" @click="handleAdd">
         <el-icon><Plus /></el-icon>新增
@@ -55,13 +57,15 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 
-// 原有导入保持不变
 import AddContactDialog from '../components/AddContactDialog.vue'
+import EditContactDialog from '../components/EditContactDialog.vue'
 
-
-// 新增对话框引用
+// 对话框引用
 const addDialog = ref()
+// 编辑对话框引用
+const editDialog = ref()
 
 // 模拟数据
 const mockData = [
@@ -192,15 +196,38 @@ onMounted(() => {
 const handleAdd = () => {
   addDialog.value.open()
 }
+
 // 新增成功回调
 const handleAddSuccess = () => {
   // 这里可以刷新表格数据
   console.log('新增成功，刷新数据')
 }
 
+// 编辑成功回调
+const handleEditSuccess = (editedData) => {
+  // 更新本地数据
+  const index = userList.value.findIndex(item => item.id === editedData.id)
+  if (index !== -1) {
+    userList.value[index] = {
+      ...userList.value[index],
+      date: editedData.date,
+      name: editedData.name,
+      province: editedData.province,
+      city: editedData.city,
+      address: editedData.address,
+      nickname: editedData.zip
+    }
+  }
+  ElMessage.success('联系人修改成功')
+}
+
+
+// const handleEdit = (row) => {
+//   // 编辑用户逻辑
+//   console.log('编辑用户', row)
+// }
 const handleEdit = (row) => {
-  // 编辑用户逻辑
-  console.log('编辑用户', row)
+  editDialog.value.open(row)
 }
 
 const handleDelete = (row) => {
