@@ -57,7 +57,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 import AddContactDialog from '../components/AddContactDialog.vue'
 import EditContactDialog from '../components/EditContactDialog.vue'
@@ -222,18 +222,53 @@ const handleEditSuccess = (editedData) => {
 }
 
 
-// const handleEdit = (row) => {
-//   // 编辑用户逻辑
-//   console.log('编辑用户', row)
-// }
 const handleEdit = (row) => {
+  console.log('编辑用户', row)
   editDialog.value.open(row)
 }
 
-const handleDelete = (row) => {
-  // 删除用户逻辑
+ 
+const handleDelete = async (row) => {
   console.log('删除用户', row)
+    // 二次确认弹窗
+    await ElMessageBox.confirm(
+      '此操作将永久删除该联系人，是否继续？',
+      '提示',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    ).then(async ()=>{
+      // 用户点击确定后执行删除
+      const res = await deleteContactApi(row.id) // 替换真实api
+      if (res.code === 0) {
+        // 从本地数据中移除
+        userList.value = userList.value.filter(item => item.id !== row.id)
+        total.value -= 1
+        ElMessage.success('删除成功')
+        
+        // 如果当前页没有数据且不是第一页，则返回上一页
+        if (filteredUserList.value.length === 0 && currentPage.value > 1) {
+          currentPage.value -= 1
+        }
+      } else {
+        ElMessage.error(res.message || '删除失败')
+      }
+    }).catch(()=>{
+      ElMessage.error('删除失败')
+    })
 }
+
+// 模拟删除API
+const deleteContactApi = (id) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ code: 0, message: '删除成功' })
+    }, 1500)
+  })
+}
+
 
 const handleSearch = () => {
   // 搜索逻辑已在计算属性中处理
