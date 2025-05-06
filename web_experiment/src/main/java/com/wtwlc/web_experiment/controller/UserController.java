@@ -44,6 +44,13 @@ public class UserController {
         }
 
         LoginUserVO loginUserVO = userService.userLogin(userName, userPassword, httpServletRequest);
+
+        System.out.println("find user loginUserVO = " + loginUserVO);
+
+        if(loginUserVO == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"未找到匹配用户");
+        }
+
         return ResultUtils.success(loginUserVO);
     }
 
