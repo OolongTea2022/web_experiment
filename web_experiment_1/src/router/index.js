@@ -42,7 +42,7 @@ const routes = [
       },
       {
         path: "UserManagement", 
-        component: () => import("../views/UserManagement.vue"),
+        component: () => import("../views/UserContactManagement.vue"),
       },
       {
         path: "ArticleManagement", 

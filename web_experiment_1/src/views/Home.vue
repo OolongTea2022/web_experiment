@@ -62,7 +62,7 @@
                 <span>功能菜单</span>
               </template>
               <el-menu-item-group>
-                <el-menu-item index="/Home/UserManagement">用户管理</el-menu-item>
+                <el-menu-item index="/Home/UserManagement">联系人管理</el-menu-item>
                 <el-menu-item index="/Home/ArticleManagement">文章管理</el-menu-item>
               </el-menu-item-group>
             </el-sub-menu>

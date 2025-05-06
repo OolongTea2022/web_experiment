@@ -1,7 +1,7 @@
 <template>
   <div class="user-management-container">
-    <h1>用户管理</h1>
-    
+    <h1>联系人管理</h1>
+    <add-contact-dialog ref="addDialog" @success="handleAddSuccess" />
     <div class="table-header">
       <el-button type="primary" @click="handleAdd">
         <el-icon><Plus /></el-icon>新增
@@ -56,6 +56,13 @@
 import { ref, computed, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
 
+// 原有导入保持不变
+import AddContactDialog from '../components/AddContactDialog.vue'
+
+
+// 新增对话框引用
+const addDialog = ref()
+
 // 模拟数据
 const mockData = [
   {
@@ -103,6 +110,51 @@ const mockData = [
     address: '上海市普陀区金沙江路 1518 弄',
     nickname: '200333',
   },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
+  {
+    id: 5,
+    date: '2016-05-03 08:00:00',
+    name: '赵小虎',
+    province: '上海',
+    city: '普陀区',
+    address: '上海市普陀区金沙江路 1518 弄',
+    nickname: '200333',
+  },
 
 
   // 可以添加更多模拟数据
@@ -136,10 +188,14 @@ onMounted(() => {
   }, 500)
 })
 
-// 操作方法
+// 修改handleAdd方法
 const handleAdd = () => {
-  // 新增用户逻辑
-  console.log('新增用户')
+  addDialog.value.open()
+}
+// 新增成功回调
+const handleAddSuccess = () => {
+  // 这里可以刷新表格数据
+  console.log('新增成功，刷新数据')
 }
 
 const handleEdit = (row) => {
