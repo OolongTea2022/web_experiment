@@ -81,7 +81,8 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { userLogin } from "../api/user"
-
+import { useUserStore } from '../stores/user'
+// /stores/user'
 import { 
   User, 
   Lock, 
@@ -109,7 +110,13 @@ const handleSubmit = async () => {
   const res = await userLogin(params);
   console.log(res);
   if(res.code == 0){
-    router.push("/Home")
+    // 保存用户信息到Pinia（自动触发持久化）
+    const userStore = useUserStore()
+    userStore.setUserInfo(res.data)
+
+    router.push("/Home/Info")
+  }else{
+    alert(res.message)//TODO 改成elementplus的
   }
   // 实际登录逻辑
 }

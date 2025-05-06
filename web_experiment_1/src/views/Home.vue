@@ -42,6 +42,13 @@
             :default-active="activeMenu"
             text-color="var(--menu-text-color)"
           >
+            <!-- 个人信息展示（默认最初进入界面） -->
+            <el-menu-item index="/Home/Info">
+              <el-icon><HomeFilled  /></el-icon>
+              <span>系统首页</span>
+            </el-menu-item>
+
+
             <!-- 首页菜单项 -->
             <el-menu-item index="/Home/HomeDefault">
               <el-icon><HomeFilled /></el-icon>

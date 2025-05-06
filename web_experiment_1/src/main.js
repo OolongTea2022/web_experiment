@@ -2,6 +2,14 @@ import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 
+import { createPinia } from 'pinia' // 导入Pinia
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+// 创建Pinia实例
+const pinia = createPinia()
+// 添加持久化插件
+pinia.use(piniaPluginPersistedstate)
+
+
 
 import './style.css'
 import App from './App.vue'
@@ -20,5 +28,8 @@ const app = createApp(App)
 //     }
 //   })
 
+
+// 使用Pinia
+app.use(pinia)
 app.use(ElementPlus)
 app.use(router).mount('#app')
