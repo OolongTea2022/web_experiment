@@ -236,7 +236,7 @@
           dialogVisible.value = false
           emit('success', formData)
         }else{
-          console.log(res.message)
+          console.error(res.message)
         }
       }
     })

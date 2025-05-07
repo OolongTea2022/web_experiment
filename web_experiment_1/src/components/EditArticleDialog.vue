@@ -25,13 +25,18 @@
   import { ref } from 'vue'
   import { ElMessage } from 'element-plus'
   
+  import { updateArticle } from "../api/article"
+import { pa } from 'element-plus/es/locale/index.mjs'
+
   const visible = ref(false)
   const formRef = ref()
   
   const form = ref({
     id: null,
     title: '',
-    content: ''
+    content: '',
+    author:'',
+    authorId:null
   })
   
   const rules = {
@@ -50,13 +55,30 @@
   const open = (row) => {
     visible.value = true
     form.value = { ...row }
+
+    console.log("这个是open传进来的",row);
+    console.log("这个是传递数值后接收到的",form.value);
+
   }
   
   const handleSubmit = async () => {
     try {
       await formRef.value.validate()
-      emit('success', { ...form.value })
-      visible.value = false
+
+      const params = form.value;
+      console.log("更新文章的参数",params);
+
+      const res = await updateArticle(params);
+
+      if(res.code == 0){
+        emit('success', { ...form.value })
+        visible.value = false
+        ElMessage.success('文章更新成功')
+      }else{
+        console.error(res.message)
+      }
+
+
     } catch (e) {
       ElMessage.warning('请完善表单信息')
     }

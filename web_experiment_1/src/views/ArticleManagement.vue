@@ -43,6 +43,8 @@
   import { ref, onMounted, computed, watch } from 'vue'
   import * as echarts from 'echarts'
   
+  import { getAllUserAndArticleNumber } from "../api/user"
+
   import { useRouter } from 'vue-router'
 
   const router = useRouter()
@@ -179,9 +181,21 @@
       chartInstance.resize()
     }
   }
+
+  //刷新作者列表函数
+  const refresh = async () =>{
+    const res = await getAllUserAndArticleNumber()
+    console.log(res)
+    if(res.code == 0){
+      authors.value = res.data
+    }else{
+      console.error(res.message);
+    }
+  }
   
   onMounted(() => {
     initChart()
+    refresh()
     window.addEventListener('resize', handleResize)
   })
   

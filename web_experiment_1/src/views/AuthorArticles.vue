@@ -100,8 +100,13 @@
   <script setup>
   import { ref, computed, onMounted, reactive } from 'vue'
   import { useRoute,useRouter } from 'vue-router'
-  import { Plus, Search } from '@element-plus/icons-vue'
+  import { Plus, Refresh, Search } from '@element-plus/icons-vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
+
+  import { getUserVOById } from "../api/user"
+  import { getArticlesById, deleteArticle, saveArticle, updateArticle } from "../api/article"
+
+
 
   const router = useRouter()
   const route = useRoute()
@@ -132,64 +137,83 @@
     name: "test"
   })
 
-  const mockArticleData = [
-    {
-      id: 1,
-      title: 'Vue3入门指南',
-      content: '本文介绍了Vue3的基本概念和使用方法，包括组合式API、响应式原理等核心内容。',
-    },
-    {
-      id: 2,
-      title: 'Element Plus实战',
-      content: '详细讲解如何使用Element Plus构建企业级前端界面，包含表单、表格等常见组件示例。',
-    },
-    {
-      id: 3,
-      title: '前端工程化实践',
-      content: '分享现代前端工程化的最佳实践，包括Webpack配置、代码规范、自动化测试等内容。',
-    },
-    {
-      id: 4,
-      title: 'TypeScript进阶',
-      content: '深入TypeScript高级特性，如泛型、装饰器、类型推断等，帮助提升代码质量。',
-    },
-    {
-      id: 5,
-      title: '响应式设计原理',
-      content: '解析响应式编程在前端开发中的应用，比较不同框架的实现方式。',
-    },
-    {
-      id: 6,
-      title: '前端性能优化',
-      content: '从加载、渲染、缓存等多维度介绍前端性能优化的实用技巧和工具。',
-    },
-    {
-      id: 7,
-      title: '微前端架构',
-      content: '探讨微前端架构的设计思路和实现方案，解决大型前端应用的模块化问题。',
-    },
-  ]
+  // const mockArticleData = [
+  //   {
+  //     id: 1,
+  //     title: 'Vue3入门指南',
+  //     content: '本文介绍了Vue3的基本概念和使用方法，包括组合式API、响应式原理等核心内容。',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Element Plus实战',
+  //     content: '详细讲解如何使用Element Plus构建企业级前端界面，包含表单、表格等常见组件示例。',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: '前端工程化实践',
+  //     content: '分享现代前端工程化的最佳实践，包括Webpack配置、代码规范、自动化测试等内容。',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'TypeScript进阶',
+  //     content: '深入TypeScript高级特性，如泛型、装饰器、类型推断等，帮助提升代码质量。',
+  //   },
+  //   {
+  //     id: 5,
+  //     title: '响应式设计原理',
+  //     content: '解析响应式编程在前端开发中的应用，比较不同框架的实现方式。',
+  //   },
+  //   {
+  //     id: 6,
+  //     title: '前端性能优化',
+  //     content: '从加载、渲染、缓存等多维度介绍前端性能优化的实用技巧和工具。',
+  //   },
+  //   {
+  //     id: 7,
+  //     title: '微前端架构',
+  //     content: '探讨微前端架构的设计思路和实现方案，解决大型前端应用的模块化问题。',
+  //   },
+  // ]
   
   onMounted(() => {
     authorId.value = route.params.authorId
     // 根据 authorId 获取作者信息和文章列表
     loadAuthorData()
 
-    setTimeout(() => {
-    articleList.value = mockArticleData
-    total.value = mockArticleData.length
-  }, 500)
+  //   setTimeout(() => {
+  //   articleList.value = mockArticleData
+  //   total.value = mockArticleData.length
+  // }, 500)
 
   })
   
-  const loadAuthorData = () => {
+  const loadAuthorData = async () => {
     // 这里调用API获取作者信息和文章
-    // 示例数据
-    if (authorId.value === '1') {
-      authorName.value = 'tom1'
-    } else if (authorId.value === '2') {
-      authorName.value = 'tom'
+    const res1 = await getUserVOById(authorId.value);
+    console.log(res1)
+
+    if(res1.code == 0){
+      userInfo.value = res1.data
+    }else{
+      console.log(res1.message);
     }
+    
+    const res2 = await getArticlesById(authorId.value)
+    console.log(res2)
+
+    if(res2.code == 0){
+      articleList.value = res2.data
+      total.value = articleList.length
+    }
+    //TODO 根据用户ID获取文章列表
+
+
+    // 示例数据
+    // if (authorId.value === '1') {
+    //   authorName.value = 'tom1'
+    // } else if (authorId.value === '2') {
+    //   authorName.value = 'tom'
+    // }
     // ...
   }
 
@@ -216,7 +240,7 @@
 
   // 新增文章
   const handleAdd = () => {
-    addDialog.value.open()
+    addDialog.value.open(userInfo)
   }
 
   // 编辑文章
@@ -236,14 +260,27 @@
         cancelButtonText: '取消',
         type: 'warning',
       }
-    ).then(() => {
-      articleList.value = articleList.value.filter(item => item.id !== row.id)
-      ElMessage.success('删除成功')
-      
-      // 如果当前页没有数据且不是第一页，则返回上一页
-      if (filteredUserList.value.length === 0 && currentPage.value > 1) {
-        currentPage.value -= 1
+    ).then(async () => {
+
+      const params = {
+        id: row.id
       }
+
+      const res = await deleteArticle(params);
+      console.log("删除结果",res);
+
+      if(res.code == 0){
+        articleList.value = articleList.value.filter(item => item.id !== row.id)
+        ElMessage.success('删除成功')
+        total.value -= 1
+        // 如果当前页没有数据且不是第一页，则返回上一页
+        if (filteredUserList.value.length === 0 && currentPage.value > 1) {
+          currentPage.value -= 1
+        }
+      }else{
+        ElMessage.error(res.message || "删除失败")
+      }
+
     }).catch(() => {
       ElMessage.info('取消删除')
     })
@@ -257,6 +294,8 @@
     
     articleList.value.unshift(newArticle)
     ElMessage.success('文章添加成功')
+    //刷新
+    loadAuthorData()
   }
 
   // 编辑成功回调
@@ -266,6 +305,8 @@
       articleList.value[index] = editedData
     }
     ElMessage.success('文章修改成功')
+    //刷新
+    loadAuthorData()
   }
 
   // 搜索

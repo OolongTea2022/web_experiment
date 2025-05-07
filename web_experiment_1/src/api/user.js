@@ -29,6 +29,26 @@ export const userRegister = async (params) => {
     return res;
 }
 
+export const getUserVOById = async (params) => {
+    const res = await myAxios.request({
+        url: "/user/get/vo" + "?id="+params,
+        method: "GET",
+        // data: params
+    });
+    return res;
+}
+
+export const getAllUserAndArticleNumber = async () => {
+    const res = await myAxios.request({
+        url: "/user/get_all_user_and_article_number",
+        method: "GET",
+        // data: params
+    });
+    return res;
+}
+
+
+
 export const getOssUploadCredential = async (fileName,contentType) => {
     const res = await myAxios.request({
         url: "/oss/avatar/upload-credential?fileName="+fileName + "&contentType=" + contentType,
@@ -36,3 +56,4 @@ export const getOssUploadCredential = async (fileName,contentType) => {
     });
     return res;
 }
+
