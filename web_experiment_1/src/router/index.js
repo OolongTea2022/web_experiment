@@ -48,6 +48,12 @@ const routes = [
         path: "ArticleManagement", 
         component: () => import("../views/ArticleManagement.vue"),
       },
+      // 新增作者文章管理动态路由
+      {
+        path: "ArticleManagement/:authorId", // 动态路由
+        component: () => import("../views/AuthorArticles.vue"),
+        props: true // 将路由参数作为props传递给组件
+      },
 
       //测试页面
       {

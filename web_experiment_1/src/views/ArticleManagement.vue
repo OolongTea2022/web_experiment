@@ -43,6 +43,10 @@
   import { ref, onMounted, computed, watch } from 'vue'
   import * as echarts from 'echarts'
   
+  import { useRouter } from 'vue-router'
+
+  const router = useRouter()
+
   // 模拟数据
   const authors = ref([
     { id: 1, name: 'tom1', articleCount: 3 },
@@ -142,6 +146,7 @@
   // 处理作者点击
   const handleAuthorClick = (row) => {
     // 这里可以添加跳转到作者文章管理的逻辑
+    router.push(`ArticleManagement/${row.id}`)
     console.log('进入作者文章管理:', row)
   }
   
