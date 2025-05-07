@@ -9,16 +9,16 @@ import com.wtwlc.web_experiment.exception.BusinessException;
 import com.wtwlc.web_experiment.model.dto.user.UserLoginRequest;
 import com.wtwlc.web_experiment.model.dto.user.UserRegisterRequest;
 import com.wtwlc.web_experiment.model.dto.user.UserUpdatePasswordRequest;
+import com.wtwlc.web_experiment.model.entity.User;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
+import com.wtwlc.web_experiment.model.vo.UserVO;
 import com.wtwlc.web_experiment.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -92,5 +92,24 @@ public class UserController {
         long result = userService.userRegister(name,password,email,birthday,avatar);
 
         return ResultUtils.success(result);
+    }
+
+
+    /**
+     * 根据id获取用户包装类
+     * @param id
+     * @return
+     */
+    @GetMapping("/get/vo")
+    public BaseResponse<UserVO> getUserVOById(long id){
+        User user = userService.getById(id);
+        if(user == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(user,userVO);
+        return ResultUtils.success(userVO);
+
     }
 }

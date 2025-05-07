@@ -1,5 +1,6 @@
 package com.wtwlc.web_experiment.service;
 
+import com.wtwlc.web_experiment.common.BaseResponse;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
@@ -52,4 +53,5 @@ public interface UserService extends IService<User> {
      * @return
      */
     long userRegister(String name, String password, String email, Date birthday, String avatar);
+
 }
