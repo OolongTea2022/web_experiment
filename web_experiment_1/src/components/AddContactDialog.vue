@@ -18,7 +18,7 @@
             type="datetime"
             placeholder="选择日期时间"
             format="YYYY-MM-DD HH:mm:ss"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DDTHH:mm:ss" 
             style="width: 100%"
           />
         </el-form-item>
@@ -90,6 +90,8 @@
   <script setup>
   import { ref, reactive, computed } from 'vue'
   import { ElMessage } from 'element-plus'
+
+  import {saveUserContact} from "../api/userContact"
   
   // 省份数据
   const provinces = ref(["北京市", "天津市", "河北省", "山西省", "内蒙古", "辽宁省", "吉林省", "黑龙江省", "上海省", "江苏省", "浙江省", "安徽省", "福建省", "江西省",
@@ -196,29 +198,71 @@
     formData.city = '' // 重置城市选择
   }
   
+  // // 打开对话框
+  // const open = () => {
+  //   formData.date = new Date().toISOString().replace('T', ' ').substring(0, 19)
+  //   dialogVisible.value = true
+  // }
+
   // 打开对话框
   const open = () => {
-    formData.date = new Date().toISOString().replace('T', ' ').substring(0, 19)
+    // 使用ISO格式的当前时间
+    formData.date = new Date().toISOString().slice(0, 19).replace('T', ' ')
     dialogVisible.value = true
   }
-  
+
   // 关闭对话框
   const handleClose = () => {
     formRef.value?.resetFields()
     dialogVisible.value = false
   }
   
+  // // 确认提交
+  // const handleConfirm = () => {
+
+  //   console.log(formRef)
+
+
+  //   formRef.value.validate(async (valid) => {
+  //     if (valid) {
+
+  //       const param = formData;
+  //       console.log(param)
+  //       const res = await saveUserContact(param)
+
+  //       console.log("提交表单后的结果：",res)
+
+
+  //       ElMessage.success('新增联系人成功')
+  //       dialogVisible.value = false
+  //       emit('success')
+  //     }
+  //   })
+  // }
+  
   // 确认提交
-  const handleConfirm = () => {
-    formRef.value.validate((valid) => {
-      if (valid) {
+const handleConfirm = () => {
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      // 确保日期格式正确
+      const submitData = {
+        ...formData,
+        date: formData.date.includes('T') ? formData.date : formData.date.replace(' ', 'T')
+      }
+
+      const res = await saveUserContact(submitData)
+      
+      if(res.code === 0) {
         ElMessage.success('新增联系人成功')
         dialogVisible.value = false
         emit('success')
+      } else {
+        ElMessage.error(res.message || '新增失败')
       }
-    })
-  }
-  
+    }
+  })
+}
+
   // 暴露方法给父组件
   defineExpose({ open })
   

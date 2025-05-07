@@ -27,7 +27,7 @@
       <el-table-column prop="province" label="省份" width="80" align="center" />
       <el-table-column prop="city" label="市区" width="120" align="center" />
       <el-table-column prop="address" label="地址"   align="center" />
-      <el-table-column prop="nickname" label="请输入昵称" width="120" align="center" />
+      <el-table-column prop="zip" label="邮编" width="100"  align="center" />
       <el-table-column label="操作" width="150" align="center">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -59,6 +59,9 @@ import { ref, computed, onMounted } from 'vue'
 import { Plus, Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+import { getAllUserContact, deleteUserContact, updateUserContact}from "../api/userContact"
+
+
 import AddContactDialog from '../components/AddContactDialog.vue'
 import EditContactDialog from '../components/EditContactDialog.vue'
 
@@ -76,7 +79,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '邮编',
+    zip: '邮编',
   },
   {
     id: 2,
@@ -85,7 +88,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 3,
@@ -94,7 +97,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 4,
@@ -103,7 +106,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -112,7 +115,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -121,7 +124,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -130,7 +133,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -139,7 +142,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -148,7 +151,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
   {
     id: 5,
@@ -157,7 +160,7 @@ const mockData = [
     province: '上海',
     city: '普陀区',
     address: '上海市普陀区金沙江路 1518 弄',
-    nickname: '200333',
+    zip: '200333',
   },
 
 
@@ -176,20 +179,32 @@ const filteredUserList = computed(() => {
   let result = userList.value
   if (searchKeyword.value) {
     result = result.filter(user => 
-      user.nickname.includes(searchKeyword.value) || 
       user.name.includes(searchKeyword.value)
     )
   }
   return result.slice((currentPage.value - 1) * pageSize.value, currentPage.value * pageSize.value)
 })
 
+
+const refresh = async ()=>{
+  const res = await getAllUserContact()
+  console.log(res)
+  if(res.code == 0){
+    userList.value = res.data.records
+    total.value = res.data.total
+  }else{
+    console.log("getAllUserContact",出错了)
+  }
+}
 // 初始化数据
-onMounted(() => {
+onMounted(async () => {
   // 模拟API请求
-  setTimeout(() => {
-    userList.value = mockData
-    total.value = mockData.length
-  }, 500)
+  refresh()
+  
+  // setTimeout(() => {
+  //   userList.value = mockData
+  //   total.value = mockData.length
+  // }, 500)
 })
 
 // 修改handleAdd方法
@@ -198,10 +213,18 @@ const handleAdd = () => {
 }
 
 // 新增成功回调
-const handleAddSuccess = () => {
+const handleAddSuccess = async () => {
   // 这里可以刷新表格数据
+  refresh()
+
   console.log('新增成功，刷新数据')
 }
+
+// 日期格式转换
+const formatDateToISO = (dateString) => {
+  // 将 "yyyy-MM-dd HH:mm:ss" 转换为 "yyyy-MM-dd'T'HH:mm:ss"
+  return dateString.replace(' ', 'T');
+};
 
 // 编辑成功回调
 const handleEditSuccess = (editedData) => {
@@ -210,12 +233,12 @@ const handleEditSuccess = (editedData) => {
   if (index !== -1) {
     userList.value[index] = {
       ...userList.value[index],
-      date: editedData.date,
+      date: formatDateToISO(editedData.date), // 转换日期格式
       name: editedData.name,
       province: editedData.province,
       city: editedData.city,
       address: editedData.address,
-      nickname: editedData.zip
+      zip: editedData.zip
     }
   }
   ElMessage.success('联系人修改成功')
@@ -241,7 +264,14 @@ const handleDelete = async (row) => {
       }
     ).then(async ()=>{
       // 用户点击确定后执行删除
-      const res = await deleteContactApi(row.id) // 替换真实api
+      const params = {
+        id: row.id
+      }
+      
+
+      const res = await deleteUserContact(params);
+      console.log(res)
+
       if (res.code === 0) {
         // 从本地数据中移除
         userList.value = userList.value.filter(item => item.id !== row.id)
@@ -258,15 +288,6 @@ const handleDelete = async (row) => {
     }).catch(()=>{
       ElMessage.error('删除失败')
     })
-}
-
-// 模拟删除API
-const deleteContactApi = (id) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ code: 0, message: '删除成功' })
-    }, 1500)
-  })
 }
 
 

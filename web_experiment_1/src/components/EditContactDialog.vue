@@ -18,7 +18,7 @@
             type="datetime"
             placeholder="选择日期时间"
             format="YYYY-MM-DD HH:mm:ss"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DDTHH:mm:ss"
             style="width: 100%"
           />
         </el-form-item>
@@ -90,6 +90,8 @@
   <script setup>
   import { ref, reactive, computed } from 'vue'
   import { ElMessage } from 'element-plus'
+
+  import { updateUserContact } from "../api/userContact"
   
     // 省份数据
     const provinces = ref(["北京市", "天津市", "河北省", "山西省", "内蒙古", "辽宁省", "吉林省", "黑龙江省", "上海省", "江苏省", "浙江省", "安徽省", "福建省", "江西省",
@@ -202,12 +204,12 @@
   const open = (row) => {
     Object.assign(formData, {
       id: row.id,
-      date: row.date,
+      date: row.date.includes('T') ? row.date : row.date.replace(' ', 'T'), // 确保格式正确
       name: row.name,
       province: row.province,
       city: row.city,
       address: row.address,
-      zip: row.nickname // 注意：mock数据中邮编字段是nickname
+      zip: row.zip 
     })
     dialogVisible.value = true
   }
@@ -220,12 +222,22 @@
   
   // 确认提交
   const handleConfirm = () => {
-    formRef.value.validate((valid) => {
+    formRef.value.validate(async (valid) => {
       if (valid) {
-        // TODO这里可以调用API提交修改
-        ElMessage.success('修改联系人成功')
-        dialogVisible.value = false
-        emit('success', formData)
+        const params = {
+          ...formData,
+          date: formData.date.includes('T') ? formData.date : formData.date.replace(' ', 'T')
+        }
+        console.log(params)
+
+        const res = await updateUserContact(params)
+        if(res.code == 0){
+          ElMessage.success('修改联系人成功')
+          dialogVisible.value = false
+          emit('success', formData)
+        }else{
+          console.log(res.message)
+        }
       }
     })
   }
