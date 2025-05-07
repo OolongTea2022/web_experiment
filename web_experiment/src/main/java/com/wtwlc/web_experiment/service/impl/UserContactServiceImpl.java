@@ -32,19 +32,6 @@ public class UserContactServiceImpl extends ServiceImpl<UserContactMapper, UserC
     UserContactMapper userContactMapper;
 
 
-//    @Override
-//    public void save(UserContactAddRequest userContactAddRequest) {
-//        System.out.println("当前线程id：" + Thread.currentThread().getId());
-//
-//        UserContact userContact = new UserContact();
-//
-//        //对象属性拷贝
-//        BeanUtils.copyProperties(userContactAddRequest,userContact);
-//
-//        userContactMapper.insert(userContact);
-//        //TODO 直接返回void
-//    }
-
     @Override
     public void saveUserContact(UserContactAddRequest userContactAddRequest) {
 
