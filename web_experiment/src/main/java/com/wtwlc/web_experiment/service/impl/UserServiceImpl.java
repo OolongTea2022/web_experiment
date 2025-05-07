@@ -7,6 +7,7 @@ import com.wtwlc.web_experiment.common.ErrorCode;
 import com.wtwlc.web_experiment.exception.BusinessException;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
+import com.wtwlc.web_experiment.model.vo.UserArticleNumberVO;
 import com.wtwlc.web_experiment.service.UserService;
 import com.wtwlc.web_experiment.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 
 import java.util.Date;
+import java.util.List;
 
 import static com.wtwlc.web_experiment.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -140,6 +142,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
             return user.getId();//TODO 疑问:id被赋值上去了吗？
         }
+    }
+
+    @Override
+    public List<UserArticleNumberVO> countArticlesByAuthorWithUser() {
+        return baseMapper.countArticlesByAuthorWithUser();
     }
 
 //    @Override

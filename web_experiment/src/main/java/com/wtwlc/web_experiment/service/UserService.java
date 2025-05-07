@@ -4,10 +4,12 @@ import com.wtwlc.web_experiment.common.BaseResponse;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
+import com.wtwlc.web_experiment.model.vo.UserArticleNumberVO;
 import com.wtwlc.web_experiment.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 /**
 * @author lenovo
@@ -54,4 +56,6 @@ public interface UserService extends IService<User> {
      */
     long userRegister(String name, String password, String email, Date birthday, String avatar);
 
+
+    List<UserArticleNumberVO> countArticlesByAuthorWithUser();
 }

@@ -11,6 +11,7 @@ import com.wtwlc.web_experiment.model.dto.user.UserRegisterRequest;
 import com.wtwlc.web_experiment.model.dto.user.UserUpdatePasswordRequest;
 import com.wtwlc.web_experiment.model.entity.User;
 import com.wtwlc.web_experiment.model.vo.LoginUserVO;
+import com.wtwlc.web_experiment.model.vo.UserArticleNumberVO;
 import com.wtwlc.web_experiment.model.vo.UserVO;
 import com.wtwlc.web_experiment.service.UserService;
 import io.swagger.annotations.Api;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -112,4 +114,17 @@ public class UserController {
         return ResultUtils.success(userVO);
 
     }
+
+
+
+    @GetMapping("/get_all_user_and_article_number")
+    public BaseResponse<List<UserArticleNumberVO>> getAllUserAndArticleNumber(){
+        List<UserArticleNumberVO> list = userService.countArticlesByAuthorWithUser();
+        if(list == null){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        return ResultUtils.success(list);
+    }
+
+
 }
