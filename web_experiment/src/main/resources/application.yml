@@ -7,6 +7,10 @@ spring:
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 #
 #  sql:
 #    init:
@@ -19,3 +23,10 @@ mybatis-plus:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印SQL日志，可选
   mapper-locations: classpath:/mapper/**/*.xml
   type-aliases-package: com.wtwlc.web_experiment.model.entity  # 你的实体类包名
+
+aliyun:
+  oss:
+    endpoint: https://xxxxxxx.com
+    accessKeyId: LTxxxxxxx
+    accessKeySecret: WQxxxxxx
+    bucketName: xxxx-xxxx-xxxx
