@@ -49,7 +49,7 @@
         </el-button>
         <el-input
           v-model="searchKeyword"
-          placeholder="请输入昵称"
+          placeholder="请输入文章关键字"
           class="search-input"
           clearable
         >
