@@ -44,8 +44,8 @@
     
     <div class="pagination-container">
       <el-pagination
-        current-page="currentPage"
-        page-size="pageSize"
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
         :total="total"
         :page-sizes="[5, 10, 20, 50]"
         layout="total, sizes, prev, pager, next, jumper"
