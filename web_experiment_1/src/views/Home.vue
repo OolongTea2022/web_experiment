@@ -12,6 +12,29 @@
             <component :is="isCollapsed ? Expand : Fold" />
           </el-icon>
           <span class="header-title">WEB实验</span>
+
+          <!-- 新增的用户操作下拉菜单 -->
+          <div class="user-actions">
+            <el-dropdown trigger="click">
+              <el-button class="user-btn" circle>
+                <el-icon :size="20"><User /></el-icon>
+              </el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="navigateToCalendar">
+                    <el-icon><Calendar /></el-icon>
+                    <span>日历</span>
+                  </el-dropdown-item>
+                  <el-dropdown-item divided @click="logout">
+                    <el-icon><SwitchButton /></el-icon>
+                    <span>退出登录</span>
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </div>
+
+
         </el-header>
       </el-container>
   
@@ -112,7 +135,7 @@
   
   <script setup>
   import { ref, computed, onMounted, onUnmounted } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { Expand, Fold } from '@element-plus/icons-vue';
   import {
     Document,
@@ -121,12 +144,15 @@
     HomeFilled,
   } from '@element-plus/icons-vue'
   
+  import { useUserStore } from "../stores/user"
+
   // 响应式状态
   const currentTheme = ref('blue-theme');
   const isCollapsed = ref(true);
   const windowWidth = ref(window.innerWidth);
   const maskVisible = ref(false);
   const route = useRoute();
+  const router = useRouter()
   
   // 计算属性
   const isMobile = computed(() => windowWidth.value < 800);
@@ -166,6 +192,19 @@
       isCollapsed.value = true;
     }
   };
+
+  //导航到日历页
+  const navigateToCalendar = () =>{
+    router.push("HomeDefault")
+  }
+
+  //注销
+  const logout = () => {
+    const userStore = useUserStore();
+    userStore.clearUserInfo()
+    console.log("成功注销当前用户")
+    router.push("/Login")
+  }
   
   // 生命周期
   onMounted(() => {
@@ -238,6 +277,28 @@
       width: 200px !important;
     }
   }
+
+
+
+    /* 用户操作按钮样式 */
+    .user-actions {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  
+  .user-btn {
+    /* background-color: transparent; */
+    border: none;
+    color: var(--menu-text-color);
+    padding: 8px;
+  }
+  
+  .user-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
   </style>
   
   <style>
