@@ -26,7 +26,7 @@ mybatis-plus:
 
 aliyun:
   oss:
-    endpoint: https://xxxxxxx.com
-    accessKeyId: LTxxxxxxx
-    accessKeySecret: WQxxxxxx
-    bucketName: xxxx-xxxx-xxxx
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    accessKeyId: LxxxxxxxxxxxxxxxxxxxP4A
+    accessKeySecret: WxxxxxxxxxxxxxxxxxxxxxxxxxxIU9
+    bucketName: xxxxx-xxxxx-xxxxxx
